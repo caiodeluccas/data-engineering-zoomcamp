@@ -4,13 +4,13 @@ services:
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: ny_taxi
+      POSTGRES_DB: ny_taxi_green
     volumes:
-      - ny_taxi_postgres_data:/var/lib/postgresql
+      - ny_taxi_green_postgres_data:/var/lib/postgresql
     ports:
       - "5432:5432"
     networks:
-      - pg-network
+      - hw-network
 
   pgadmin:
     image: dpage/pgadmin4
@@ -22,14 +22,14 @@ services:
     ports:
       - "8085:80"
     networks:
-      - pg-network
+      - hw-network
     depends_on:
       - pgdatabase
 
   taxi_ingest:
     image: taxi_ingest:v001
     networks:
-      - pg-network
+      - hw-network
     depends_on:
       - pgdatabase
     command:
@@ -37,14 +37,11 @@ services:
       - "--pg-password=root"
       - "--pg-host=pgdatabase"
       - "--pg-port=5432"
-      - "--pg-db=ny_taxi"
-      - "--target-table=yellow_taxi_trips"
-      - "--chunksize=100000"
+      - "--pg-db=ny_taxi_green"
+  
+volumes:
+  ny_taxi_green_postgres_data:
+  pgadmin_data:
 
 networks:
-  pg-network:
-    name: pg-network
-
-volumes:
-  ny_taxi_postgres_data:
-    pgadmin_data:
+  hw-network:
